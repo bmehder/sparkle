@@ -1,0 +1,16 @@
+body {
+  font-family: sans-serif;
+  padding: 2rem;
+  background: #fff;
+  color: #333;
+}
+
+#app, #timer, #counter {
+  margin-bottom: 2rem;
+}
+
+button {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+}
