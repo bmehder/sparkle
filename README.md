@@ -1,12 +1,12 @@
-# Sparkle UI Framework
+# Sparkle Microframework
 
-**Sparkle** is a minimalist, functional UI microframework designed to prioritize clarity, composability, and full developer control. Built on top of [`bedazzle`](https://github.com/bmehder/bedazzle) for behavior composition and [`slank`](https://github.com/bmehder/slank) for reactivity, Sparkle offers an expressive alternative to complex frontend ecosystems.
+**Sparkle** is a minimalist, functional UI microframework designed to prioritize clarity, composability, and full developer control. Built on top of [`bedazzle`](https://github.com/bmehder/bedazzle) for behavior composition and [`blink`](https://github.com/bmehder/slank) for reactivity, Sparkle offers an expressive alternative to complex frontend ecosystems.
 
 ## Features
 
 - **Composable UI Behavior:** Uses "beads" — simple, reusable functions that encapsulate behavior.
 - **Functional Core:** Emphasizes pure functions and immutable state.
-- **Reactive Signals:** Slank powers reactive updates with no virtual DOM or proxy magic.
+- **Reactive Signals:** Blink powers reactive updates with no virtual DOM or proxy magic.
 - **Build-Free Development:** No bundlers, transpilers, or project scaffolding required.
 - **Standard Beads Library:** A curated collection of reusable logic patterns.
 
@@ -36,7 +36,7 @@ Sparkle is for developers who prefer directness over abstraction and value readi
 
 ## Documentation
 
-See [`docs/`](./docs) for guides, examples, and the original press release.
+See [`docs/`](./resources/docs/sparkle-framework-documentation.md) for guides, examples, and the original press release.
 
 ## License
 
