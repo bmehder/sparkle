@@ -13,7 +13,7 @@ const { appRef, decorate, update, wire } = createApp({
   beads: [
     withCounter,
     withCountToggles,
-    obj => ({
+    _ => ({
       el: {
         countDisplay: document.getElementById('count-display'),
         inc: document.getElementById('inc'),
