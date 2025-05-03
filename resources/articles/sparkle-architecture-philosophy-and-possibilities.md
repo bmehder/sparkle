@@ -39,7 +39,7 @@ Where:
 - `render(app)` updates the DOM from state
 - `setup()` wires events or effects — optional but common
 
-> **If your app exports **``**, **``**, and optionally **``**, it works with Sparkle. No more, no less.**
+> **If your app exports `appRef`, `render`, and optionally `setup`, it works with Sparkle. No more, no less.****
 
 ---
 
@@ -55,7 +55,7 @@ In Sparkle, functionality is composed via **beads** — pure functions of the fo
 - `decorate(newState)` allows recursive decoration
 - `partialState` is an object of new fields or methods
 
-> **Beads return **``**, not a full object. Sparkle merges them together immutably.**
+> **Beads return `partialState`, not a full object. Sparkle merges them together immutably.****
 
 This enables layering functionality like this:
 
@@ -150,7 +150,7 @@ This makes it perfect for:
 
 ## 🔍 Declarative Wiring
 
-> **Sparkle’s **``** function replaces lifecycle hooks with pure intent.**
+> **Sparkle’s `wire()` function replaces lifecycle hooks with pure intent.****
 
 Instead of mounting logic or component-based listeners, Sparkle encourages:
 

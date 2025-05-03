@@ -1,5 +1,6 @@
 body {
   font-family: sans-serif;
+  margin: 2rem;
   padding: 2rem;
   background: #fff;
   color: #333;
@@ -13,4 +14,23 @@ button {
   font-size: 1rem;
   padding: 0.5rem 1rem;
   margin-top: 0.5rem;
+}
+
+/* Todo App */
+#todo-app input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+#todo-app li {
+  list-style: none;
+  padding: 0.3rem;
+  cursor: pointer;
+}
+
+#todo-app li.done {
+  text-decoration: line-through;
+  color: gray;
 }

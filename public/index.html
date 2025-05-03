@@ -6,6 +6,12 @@
   <link rel="stylesheet" href="../src/styles/index.css">
 </head>
 <body>
+  <div id="todo-app">
+    <h1>Todos</h1>
+    <input id="new-todo" placeholder="What needs to be done?" />
+    <ul id="todo-list"></ul>
+  </div>
+
   <div id="app">
     <h1 id="label"></h1>
     <button id="toggle"></button>
@@ -13,14 +19,15 @@
 
   <div id="timer">
     <h2>Timer</h2>
-    <p id="time-display">0s</p>
+    <p id="timeDisplay">0s</p>
     <button id="start">Start</button>
     <button id="stop">Stop</button>
   </div>
 
   <div id="counter">
     <h2>Counter</h2>
-    <p id="count-display">0</p>
+    <p>Count: <span id="countDisplay">0</span></p>
+    <p>Toggle Count: <span id="toggleCount">0</span></p>
     <button id="inc">Increment</button>
     <button id="dec">Decrement</button>
   </div>

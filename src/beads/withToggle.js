@@ -1,7 +1,9 @@
-export const withToggle = obj => {
-  const isOn = obj.isOn ?? false
+import { createBead } from '../utils/createBead.js';
+
+export const withToggle = createBead('toggle', obj => {
+  const isOn = !!obj.isOn;
   return {
     isOn,
-    toggle: () => ({ ...obj, isOn: !isOn }),
-  }
-}
+    toggle: () => ({ isOn: !isOn }),
+  };
+});

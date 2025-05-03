@@ -1,7 +1,9 @@
-export const withCountToggles = obj => {
-  const toggleCount = obj.toggleCount ?? 0
-  return {
-    toggleCount,
-    countToggle: () => ({ ...obj, toggleCount: toggleCount + 1 })
-  }
-}
+import { createBead } from '../utils/createBead.js'
+
+export const withCountToggles = createBead('countToggles', obj => {
+	const toggleCount = obj.toggleCount ?? 0
+	return {
+		toggleCount,
+		countToggle: () => ({ toggleCount: toggleCount + 1 }),
+	}
+})

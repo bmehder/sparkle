@@ -1,37 +1,46 @@
 import { createApp } from '../runtime/createApp.js'
 import { withTime } from '../beads/withTime.js'
-import { withTimerDOM } from '../beads/withTimerDOM.js'
-import { withLogger } from '../beads/withLogger.js'
+import { withDOM } from '../standard-beads/withDOM.js'
+import { withLogger } from '../standard-beads/withLogger.js'
 
-const render = obj =>
-  (obj.el.timeDisplay.textContent = `${obj.seconds}s`)
+// const render = ({ el, seconds }) => {
+// 	el.timeDisplay.textContent = `${seconds}s`
+// }
+
+const render = ({ el, seconds }) => {
+	if (!el?.timeDisplay) {
+		console.warn('[render] el.timeDisplay is missing')
+		console.log('[render] el:', el)
+		return
+	}
+
+	el.timeDisplay.textContent = `${seconds}s`
+}
 
 const { appRef, update, wire } = createApp({
-  seed: { seconds: 0 },
-  beads: [withTime, withTimerDOM, withLogger],
-  render
+	seed: { seconds: 0 },
+	beads: [withTime, withDOM('timeDisplay', 'start', 'stop'), withLogger('log')],
+	render,
 })
 
 let intervalId = null
 
-const start = obj => {
-  if (!intervalId) {
-    intervalId = setInterval(() => {
-      update(o => o.tick())
-    }, 1000)
-  }
-  return obj
+const start = () => {
+	if (!intervalId) {
+		intervalId = setInterval(() => {
+			update(o => o.tick())
+		}, 1000)
+	}
 }
 
-const stop = obj => {
-  clearInterval(intervalId)
-  intervalId = null
-  return obj
+const stop = () => {
+	clearInterval(intervalId)
+	intervalId = null
 }
 
 const setup = () => {
-  wire('start', 'click', start)
-  wire('stop', 'click', stop)
+	wire('start', 'click', start)
+	wire('stop', 'click', stop)
 }
 
 export { appRef, render, setup }
