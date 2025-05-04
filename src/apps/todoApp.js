@@ -2,6 +2,7 @@ import { createApp } from '../runtime/createApp.js'
 import { withTodos } from '../beads/withTodos.js'
 import { withNewText } from '../beads/withNewText.js'
 import { withLogger } from '../standard-beads/withLogger.js'
+import { withDevPanel } from '../standard-beads/withDevPanel.js'
 import { withDOM } from '../standard-beads/withDOM.js'
 
 export const render = ({ el, todos, newText }) => {
@@ -9,9 +10,12 @@ export const render = ({ el, todos, newText }) => {
 
 	todos.forEach((todo, index) => {
 		const li = document.createElement('li')
-		li.textContent = todo.text
 		li.className = todo.done ? 'done' : ''
 		li.onclick = () => update(s => s.toggleTodo(index))
+
+		const label = document.createElement('span')
+		label.className = 'label'
+		label.textContent = todo.text
 
 		const del = document.createElement('button')
 		del.textContent = '×'
@@ -20,7 +24,7 @@ export const render = ({ el, todos, newText }) => {
 			update(s => s.removeTodo(index))
 		}
 
-		li.appendChild(del)
+		li.append(label, del)
 		el.todoList.appendChild(li)
 	})
 
@@ -34,6 +38,7 @@ export const { appRef, wire, update } = createApp({
 		withNewText,
 		withLogger('log'),
 		withDOM('new-todo', 'todo-list'),
+		withDevPanel,
 		obj => ({
 			el: {
 				newTodo: document.getElementById('new-todo'),

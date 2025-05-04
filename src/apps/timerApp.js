@@ -2,24 +2,20 @@ import { createApp } from '../runtime/createApp.js'
 import { withTime } from '../beads/withTime.js'
 import { withDOM } from '../standard-beads/withDOM.js'
 import { withLogger } from '../standard-beads/withLogger.js'
-
-// const render = ({ el, seconds }) => {
-// 	el.timeDisplay.textContent = `${seconds}s`
-// }
+import { withDevPanel } from '../standard-beads/withDevPanel.js'
 
 const render = ({ el, seconds }) => {
-	if (!el?.timeDisplay) {
-		console.warn('[render] el.timeDisplay is missing')
-		console.log('[render] el:', el)
-		return
-	}
-
 	el.timeDisplay.textContent = `${seconds}s`
 }
 
 const { appRef, update, wire } = createApp({
 	seed: { seconds: 0 },
-	beads: [withTime, withDOM('timeDisplay', 'start', 'stop'), withLogger('log')],
+	beads: [
+		withTime,
+		withDOM('timeDisplay', 'start', 'stop'),
+		withLogger('logDERP'),
+		withDevPanel,
+	],
 	render,
 })
 

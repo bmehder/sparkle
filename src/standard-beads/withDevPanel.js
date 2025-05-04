@@ -11,7 +11,9 @@ export const withDevPanel = createBead('devpanel', obj => {
 	const panel = existing ?? createDevPanel()
 	const body = document.getElementById('dev-panel-body')
 	if (body && !panel.classList.contains('hidden')) {
-		body.textContent = JSON.stringify(obj, null, 2)
+		// body.textContent = JSON.stringify(obj, null, 2)
+		body.textContent = JSON.stringify(serialize(obj), null, 2)
+
 	}
 	return {}
 })
@@ -30,7 +32,7 @@ const panelStyles = {
 	resize: 'both',
 	background: '#111',
 	color: '#0f0',
-	fontSize: '0.75rem',
+	fontSize: '0.8rem',
 	border: '1px solid lime',
 	borderRadius: '0.5rem',
 	zIndex: '9999',
@@ -247,5 +249,24 @@ function savePanelState(panel) {
 	localStorage.setItem(
 		'devPanelPos',
 		JSON.stringify({ x, y, width, height, opacity })
+	)
+}
+
+// ------------------------------
+// Helpers
+// ------------------------------
+
+function serialize(obj) {
+	return JSON.parse(
+		JSON.stringify(obj, (_, value) => {
+			if (value instanceof HTMLElement) {
+				return {
+					tag: value.tagName.toLowerCase(),
+					id: value.id || undefined,
+					class: value.className || undefined,
+				}
+			}
+			return value
+		})
 	)
 }

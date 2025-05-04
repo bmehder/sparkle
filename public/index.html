@@ -5,32 +5,40 @@
   <title>Sparkle</title>
   <link rel="stylesheet" href="../src/styles/index.css">
 </head>
-<body>
-  <div id="todo-app">
-    <h1>Todos</h1>
-    <input id="new-todo" placeholder="What needs to be done?" />
-    <ul id="todo-list"></ul>
-  </div>
+<body class="flow">
+  <section>
+    <div id="todo-app" class="flow">
+      <h1>Todos</h1>
+      <input id="new-todo" placeholder="What needs to be done?" />
+      <ul id="todo-list"></ul>
+    </div>
+  </section>
 
-  <div id="app">
-    <h1 id="label"></h1>
-    <button id="toggle"></button>
-  </div>
+  <section>
+    <div id="toggle" class="flow">
+      <h1 id="label"></h1>
+      <button id="toggleButton"></button>
+    </div>
+  </section>
 
-  <div id="timer">
-    <h2>Timer</h2>
-    <p id="timeDisplay">0s</p>
-    <button id="start">Start</button>
-    <button id="stop">Stop</button>
-  </div>
+  <section>
+    <div id="timer" class="flow">
+      <h2>Timer</h2>
+      <p id="timeDisplay">0s</p>
+      <button id="start">Start</button>
+      <button id="stop">Stop</button>
+    </div>
+  </section>
 
-  <div id="counter">
-    <h2>Counter</h2>
-    <p>Count: <span id="countDisplay">0</span></p>
-    <p>Toggle Count: <span id="toggleCount">0</span></p>
-    <button id="inc">Increment</button>
-    <button id="dec">Decrement</button>
-  </div>
+  <section>
+    <div id="counter" class="flow">
+      <h2>Counter</h2>
+      <p>Count: <span id="countDisplay">0</span></p>
+      <p>Toggle Count: <span id="toggleCount">0</span></p>
+      <button id="inc">Increment</button>
+      <button id="dec">Decrement</button>
+    </div>
+  </section>
 
   <script type="module" src="../src/main.js"></script>
 </body>

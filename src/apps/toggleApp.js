@@ -3,13 +3,14 @@ import { withToggle } from '../beads/withToggle.js'
 import { withCountToggles } from '../beads/withCountToggles.js'
 import { withDOM } from '../standard-beads/withDOM.js'
 import { withLogger } from '../standard-beads/withLogger.js'
+import { withDevPanel } from '../standard-beads/withDevPanel.js'
 
 const renderLabel = ({ el, label, isOn }) => {
 	el.label.textContent = `${label}: ${isOn ? 'ON' : 'OFF'}`
 }
 
 const renderButton = ({ el, isOn }) => {
-	el.toggle.textContent = isOn ? 'Turn Off' : 'Turn On'
+	el.toggleButton.textContent = isOn ? 'Turn Off' : 'Turn On'
 }
 
 const render = obj => [renderLabel, renderButton].forEach(fn => fn(obj))
@@ -19,7 +20,8 @@ const { appRef, wire } = createApp({
 	beads: [
 		withToggle,
 		withCountToggles,
-		withDOM('label', 'toggle'),
+		withDOM('label', 'toggleButton'),
+		withDevPanel,
 		withLogger('log'),
 	],
 	render,
@@ -32,7 +34,7 @@ const toggleAndCount = o => ({
 })
 
 const setup = () => {
-	wire('toggle', 'click', toggleAndCount)
+	wire('toggleButton', 'click', toggleAndCount)
 }
 
 export { appRef, render, setup }

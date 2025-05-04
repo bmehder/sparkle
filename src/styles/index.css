@@ -27,6 +27,10 @@ button {
 }
 
 /* Todo App */
+#todo-app {
+  max-width: 32rem;
+}
+
 #todo-app input {
   padding: 0.5rem;
   font-size: 1rem;
@@ -35,14 +39,18 @@ button {
 }
 
 #todo-app li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   list-style: none;
   padding: 0.3rem;
   cursor: pointer;
 }
 
-#todo-app li.done {
+#todo-app li.done .label {
   text-decoration: line-through;
-  color: gray;
+  opacity: 0.6;
 }
 
 /* Carousel */
