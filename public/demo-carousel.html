@@ -5,13 +5,15 @@
   <title>Carousel Demo — Sparkle</title>
   <link rel="stylesheet" href="../src/styles/index.css">
 </head>
-<body>
+<body class="flow">
   <h1>🎠 Sparkle Carousel (Embeddable Widget Demo)</h1>
 
   <div id="carousel" style="margin-bottom: 2rem;">
     <p data-display>Loading...</p>
-    <button data-prev>← Prev</button>
-    <button data-next>Next →</button>
+    <div class="button-group">
+      <button data-prev>← Prev</button>
+      <button data-next>Next →</button>
+    </div>
   </div>
 
   <script type="module">

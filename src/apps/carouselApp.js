@@ -32,7 +32,7 @@ export const createCarouselApp = (containerId = 'carousel') => {
 	}
 
 	// DOM bead scoped to the widget container
-	const withScopedDOM = createBead('dom', _obj => ({
+	const withScopedDOM = createBead('carousel-dom', _obj => ({
 		el: {
 			display: el('display'),
 			prev: el('prev'),
@@ -69,7 +69,7 @@ export const createCarouselApp = (containerId = 'carousel') => {
 		if (!valid) {
 			throw new Error('❌ Carousel interface invalid')
 		}
-		return { _tested: true }
+		return { _tests: 'passed' }
 	})
 
 	// Compose the app
