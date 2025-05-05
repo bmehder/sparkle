@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Carousel Demo — Sparkle</title>
-  <link rel="stylesheet" href="../src/styles/index.css">
+  <link rel="stylesheet" href="./styles/index.css">
 </head>
 <body class="flow">
   <h1>🎠 Sparkle Carousel (Embeddable Widget Demo)</h1>
@@ -17,11 +17,9 @@
   </div>
 
   <script type="module">
-    import { createCarouselApp } from '../src/apps/carouselApp.js'
-    import { registerApp } from '../src/runtime/registerApp.js'
+    import { createCarouselApp } from './sparkle/apps/carouselApp.js'
 
-    const { appRef, render, setup } = createCarouselApp('carousel')
-    registerApp({ appRef, render, setup })
+    createCarouselApp('carousel')
   </script>
 </body>
 </html>
