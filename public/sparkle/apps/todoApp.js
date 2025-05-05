@@ -36,7 +36,7 @@ export const { appRef, update } = createApp({
 	beads: [
 		withTodos,
 		withNewText,
-		withLogger('todo-list'),
+		withLogger('log-todos'),
 		withDOM('new-todo', 'todo-list'),
 		withDevPanel,
 		obj => ({
@@ -55,7 +55,10 @@ export const { appRef, update } = createApp({
 
 		wire('newTodo', 'keypress', (o, e) => {
 			if (e.key === 'Enter' && o.newText.trim()) {
-				return o.addTodo(o.newText.trim())
+				return [
+					o.addTodo(o.newText.trim()),
+					{ newText: '' }, // reset input
+				]
 			}
 		})
 	},

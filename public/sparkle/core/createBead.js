@@ -5,9 +5,6 @@
  * Each bead receives the current object and returns new partial state.
  * It also provides development-time logging and key collision warnings.
  *
- * Use DEBUG_BEADS to enable or disable bead logging globally.
- * Use DEBUG_BEAD_NAMES to limit logging to specific bead names.
- *
  * @param {string} name - The display name of the bead (used in debug logs)
  * @param {function} fn - The bead function (receives state and optional redecorate)
  * @returns {function} - A decorator function: (obj, redecorate) => partial update

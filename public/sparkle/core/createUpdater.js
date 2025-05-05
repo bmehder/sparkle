@@ -24,8 +24,4 @@ export const createUpdater = (ref, decorate) => fn => {
 
 	// 🧪 Optional: call .log() if the state exposes it
 	ref.value.log?.()
-
-	// 🖼 Trigger a re-render with the new decorated state
-	// Redundant: This is handled by a signal in createApp()
-	// render(ref.value)
 }

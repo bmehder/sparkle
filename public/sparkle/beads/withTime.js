@@ -6,5 +6,6 @@ export const withTime = createBead('time', obj => {
 	return {
 		seconds,
 		tick: () => ({ seconds: seconds + 1 }),
+		reset: () => ({ seconds: 0 })
 	}
 })

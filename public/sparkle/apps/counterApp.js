@@ -21,15 +21,8 @@ const { appRef } = createApp({
 	],
 	render,
 	setup: ({ wire }) => {
-		wire('inc', 'click', o => ({
-			...o.increment(),
-			...o.countToggle?.(),
-		}))
-
-		wire('dec', 'click', o => ({
-			...o.decrement(),
-			...o.countToggle?.(),
-		}))
+		wire('inc', 'click', o => [o.increment(), o.countToggle?.()])
+		wire('dec', 'click', o => [o.decrement(), o.countToggle?.()])
 	},
 })
 

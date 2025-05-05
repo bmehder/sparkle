@@ -15,12 +15,6 @@ const renderButton = ({ el, isOn }) => {
 
 const render = obj => [renderLabel, renderButton].forEach(fn => fn(obj))
 
-const toggleAndCount = o => ({
-	label: o.label,
-	...o.toggle(),
-	...o.countToggle(),
-})
-
 const { appRef } = createApp({
 	seed: { label: 'Lights' },
 	beads: [
@@ -32,8 +26,10 @@ const { appRef } = createApp({
 	],
 	render,
 	setup: ({ wire }) => {
-		wire('toggleButton', 'click', toggleAndCount)
-	}
+		wire('toggleButton', 'click', o => {
+			return [o.toggle(), o.countToggle()]
+		})
+	},
 })
 
 export { appRef, render }

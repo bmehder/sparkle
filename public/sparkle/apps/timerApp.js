@@ -23,11 +23,16 @@ const stop = () => {
 	intervalId = null
 }
 
+const reset = () => {
+	stop()
+	update(o => o.reset())
+}
+
 const { appRef, update } = createApp({
 	seed: { seconds: 0 },
 	beads: [
 		withTime,
-		withDOM('timeDisplay', 'start', 'stop'),
+		withDOM('timeDisplay', 'start', 'stop', 'reset'),
 		withLogger('timer'),
 		withDevPanel,
 	],
@@ -35,6 +40,7 @@ const { appRef, update } = createApp({
 	setup: ({ wire }) => {
 		wire('start', 'click', start)
 		wire('stop', 'click', stop)
+		wire('reset', 'click', reset)
 	},
 })
 
