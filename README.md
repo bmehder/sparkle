@@ -1,43 +1,122 @@
-# Sparkle Microframework
+# ✨ Sparkle
 
-**Sparkle** is a minimalist, functional UI microframework designed to prioritize clarity, composability, and full developer control. Built on top of [`bedazzle`](https://github.com/bmehder/bedazzle) for behavior composition and [`blink`](https://github.com/bmehder/slank) for reactivity, Sparkle offers an expressive alternative to complex frontend ecosystems.
+> Composable, build-free UI widgets using behavior layering and reactive signals — no frameworks, no bundlers, no magic.
 
-## Features
+Sparkle is a microframework for building small, reactive apps (like buttons, carousels, counters, or todo lists) using plain HTML and JavaScript. It’s inspired by functional programming, not by React or the virtual DOM.
 
-- **Composable UI Behavior:** Uses "beads" — simple, reusable functions that encapsulate behavior.
-- **Functional Core:** Emphasizes pure functions and immutable state.
-- **Reactive Signals:** Blink powers reactive updates with no virtual DOM or proxy magic.
-- **Build-Free Development:** No bundlers, transpilers, or project scaffolding required.
-- **Standard Beads Library:** A curated collection of reusable logic patterns.
+* ✅ No build step
+* 🧹 Composable "beads" (behavior units)
+* ⚡ Minimal reactive core (`explicit`, `fx`)
+* 🧠 Useful for education and experimentation
+* 🪄 Ideal for embeddable widgets and UI islands
 
-## Getting Started
+## 🚀 Quick Start
 
-```bash
-git clone https://github.com/bmehder/sparkle.git
-cd sparkle
-npm install
-npm run dev
+Create an HTML file:
+
+```html
+<script type="module">
+  import { createApp } from './sparkle/core/createApp.js'
+  import { withToggle } from './sparkle/beads/withToggle.js'
+  import { withDOM } from './sparkle/standard-beads/withDOM.js'
+
+  const render = ({ el, isOn }) => {
+    el.button.textContent = isOn ? 'Turn Off' : 'Turn On'
+  }
+
+  createApp({
+    seed: { isOn: false },
+    beads: [withToggle, withDOM('button')],
+    render,
+    setup: ({ wire }) => {
+      wire('button', 'click', o => o.toggle())
+    }
+  })
+</script>
+
+<button id="button">Toggle</button>
 ```
 
-Then open the example apps in `src/`.
+Just drop it in your `public/` folder and you're done.
 
-## Included Examples
+## 🧹 Beads: Layered Behavior
 
-- Toggle app
-- Counter app
-- Timer app
-- Carousel widget
+Beads are composable functions that add behavior to your app state.
 
-These demos showcase how to build UI with Sparkle’s functional, reactive approach.
+```js
+export const withCounter = createBead('counter', obj => {
+  const count = obj.count ?? 0
+  return {
+    count,
+    increment: () => ({ count: count + 1 }),
+    decrement: () => ({ count: count - 1 })
+  }
+})
+```
 
-## Philosophy
+They’re named for a reason — you thread them together like jewelry.
 
-Sparkle is for developers who prefer directness over abstraction and value reading code as much as writing it. It avoids assumptions about architecture and leaves you in full control.
+## ⚡ Signals: Minimal Reactivity
 
-## Documentation
+Blink (Sparkle’s signal system) gives you `explicit()` and `fx()` for reactive state:
 
-See [`docs/`](./resources/docs/sparkle-framework-documentation.md) for guides, examples, and the original press release.
+```js
+const count = explicit(0)
 
-## License
+fx(() => {
+  console.log('Count is now:', count.value)
+})
 
-[MIT](./LICENSE)
+count.value++ // triggers the effect
+```
+
+Sparkle uses this internally to re-render your app automatically.
+
+## 📆 Folder Structure
+
+```
+sparkle/
+  core/              → Minimal runtime (no framework)
+  beads/             → App-specific behaviors
+  standard-beads/    → Shared, generic beads (DOM, logger, persistence)
+  apps/              → Self-contained app modules
+  styles/            → Global stylesheet (optional)
+```
+
+## 🧠 Why Sparkle?
+
+Sparkle is less about competing with React, Vue, or Svelte — and more about **rethinking how small UI logic is composed**.
+
+It’s great for:
+
+* Embeddable widgets
+* Teaching functional composition
+* Building UI without the weight of a framework
+* Thinking in behavior, not components
+
+## 🧪 Example Apps
+
+Check out `/apps/` for examples:
+
+* `todoApp.js`
+* `toggleApp.js`
+* `voteApp.js`
+* `carouselApp.js`
+
+Each app defines its own logic, wiring, and render function — no framework required.
+
+## ❤️ Philosophy
+
+> Sparkle isn’t a framework. It’s a set of ideas — about smallness, layering, and clarity.
+
+You can read more in the [`docs/`](./docs) folder or visit the [Why Sparkle](./docs/why-sparkle.md) essay.
+
+## 🛠️ No Build. No Bundler. No Problem.
+
+Just drop the `sparkle/` folder into your `public/` directory and start importing modules via `type="module"`.
+
+It’s that simple.
+
+## 🧪 License
+
+MIT

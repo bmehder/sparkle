@@ -21,7 +21,4 @@ export const createUpdater = (ref, decorate) => fn => {
 
 	// ✅ Re-apply decoration to the new state and assign it
 	ref.value = decorate(next)
-
-	// 🧪 Optional: call .log() if the state exposes it
-	ref.value.log?.()
 }

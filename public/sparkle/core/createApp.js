@@ -1,6 +1,6 @@
 import { createDecorator } from './createDecorator.js'
 import { createUpdater } from './createUpdater.js'
-import { createWiring } from './wire.js'
+import { createWiring } from './createWiring.js'
 import { explicit, fx } from './blink.js'
 
 /**
@@ -21,18 +21,11 @@ import { explicit, fx } from './blink.js'
 export const createApp = ({ seed, beads, render, setup, autoRender = true }) => {
 	const decorate = createDecorator(...beads)
 	const appRef = explicit(decorate(seed))
-	const update = createUpdater(appRef, decorate, render)
+	const update = createUpdater(appRef, decorate)
 	const wire = createWiring(appRef, update)
 
-	// Automatically re-render when app state changes
-	if (autoRender) {
-		fx(() => render(appRef.value))
-	}
-
-	// Automatically run setup if provided
-	if (typeof setup === 'function') {
-		setup({ appRef, update, wire })
-	}
+	if (autoRender) fx(() => render(appRef.value))
+	if (typeof setup === 'function') setup({ appRef, update, wire })
 
 	return { appRef, decorate, update, wire }
 }
