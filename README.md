@@ -109,7 +109,7 @@ Each app defines its own logic, wiring, and render function — no framework req
 
 > Sparkle isn’t a framework. It’s a set of ideas — about smallness, layering, and clarity.
 
-You can read more in the [`docs/`](./docs) folder or visit the [Why Sparkle](./docs/why-sparkle.md) essay.
+You can read more in the [`docs/`](./resources/docs) folder or visit the [Why Sparkle](./resources/articles/why-sparkle.md) essay.
 
 ## 🛠️ No Build. No Bundler. No Problem.
 
