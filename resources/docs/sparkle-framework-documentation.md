@@ -1,6 +1,5 @@
 # 🟣 Sparkle Framework Documentation
 
-
 ## 🧭 What’s in This Guide
 
 This documentation is a deep technical walkthrough of the Sparkle framework. It’s designed to be read front-to-back or referenced section by section.
@@ -26,39 +25,30 @@ Sparkle is a minimal, functional UI microframework built on top of two core idea
 
 It aims to give developers full control over DOM, behavior, and state — without templates, VDOM, or build steps. Instead of magic, Sparkle gives you **functions, reactivity, and clarity**.
 
-
 ---
-
-
 
 ## 🚀 Quickstart
 
 Sparkle apps don’t require a build tool, bundler, or CLI. All you need is an HTML file and a script tag. Here's the fastest way to get started:
 
-
 ---
-
-
 
 ### 1. Scaffold Your HTML
 
 ```html
 <body>
-  <div id="count-app">
-    <p id="count-display">0</p>
-    <button id="inc">Increment</button>
-  </div>
+	<div id="count-app">
+		<p id="count-display">0</p>
+		<button id="inc">Increment</button>
+	</div>
 
-  <script type="module" src="./sparkle/apps/count-app.js"></script>
+	<script type="module" src="./sparkle/apps/count-app.js"></script>
 </body>
 ```
 
 You’ll reference elements like `#count-display` and `#inc` in your app’s `render()` and `wire()` logic.
 
-
 ---
-
-
 
 ### 2. Create Your App Logic
 
@@ -93,18 +83,13 @@ const { appRef } = createApp({
 })
 
 export { appRef, render }
-
 ```
-
 
 ---
 
 That’s it. You now have a fully functional reactive UI with no VDOM, no JSX, and no framework boilerplate.
 
-
 ---
-
-
 
 ### ✅ TL;DR
 
@@ -114,11 +99,7 @@ That’s it. You now have a fully functional reactive UI with no VDOM, no JSX, a
 
 > If it sparkles, ship it.
 
-
 ## ✨ Core Concepts
-
-
-
 
 ### ⚡️ Blink
 
@@ -132,10 +113,7 @@ Core utilities:
 
 When your app state is stored in a signal (`explicit()`), Sparkle can re-run your `render()` function every time the state changes — no proxies, no hooks, just pure state.
 
-
 ---
-
-
 
 ## 🧱 File Structure
 
@@ -148,12 +126,9 @@ sparkle/
   styles/         → CSS for examples
 ```
 
-
 ---
 
-
 
-
 
 ## 🏗️ Runtime & Architecture
 
@@ -165,10 +140,7 @@ DOM ↔ wire() → update() → bedazzle() → render()
 
 Let’s look at each part.
 
-
 ---
-
-
 
 ### 🔧 `createApp()`
 
@@ -176,9 +148,9 @@ This is the entry point for setting up a Sparkle app. It wires together state ma
 
 ```js
 const { appRef, decorate, update, wire } = createApp({
-  seed: { count: 0 },
-  beads: [withCounter, withLogger],
-  render
+	seed: { count: 0 },
+	beads: [withCounter, withLogger],
+	render,
 })
 ```
 
@@ -193,10 +165,7 @@ const { appRef, decorate, update, wire } = createApp({
 
 What is returned by `createApp` is derived from your initial state and beads. You get full control — nothing is injected or proxied.
 
-
 ---
-
-
 
 ### 🔁 `createUpdater()`
 
@@ -217,10 +186,7 @@ In other words:
 
 This is Sparkle’s **immutable update loop** — no proxies, no observers. You always return a new state object, and `decorate()` keeps its methods fresh.
 
-
 ---
-
-
 
 ### 🧩 `decorate()` and Re-Decoration
 
@@ -234,9 +200,7 @@ Because beads are pure functions that return extensions to `obj`, they can be re
 
 This is Sparkle’s answer to stale closures, missing methods, or broken state: just decorate the new object again.
 
-
 ---
-
 
 #### 🧠 Why Not Just Copy the Behavior?
 
@@ -258,10 +222,7 @@ Instead of trying to preserve behavior manually, Sparkle just **re-decorates** t
 
 This keeps your app consistent and your behavior declarations testable and clean. This approach also makes beads highly testable and composable.
 
-
 ---
-
-
 
 ### 🎛 `wire()` and DOM Ownership
 
@@ -283,18 +244,18 @@ This lets you wire up behavior declaratively, but keep full control over:
 - The events (you choose which ones to listen for)
 - The actions (you write them by hand)
 
-
 ---
 
-
-
 ### 🔍 How This Differs from Other Frameworks
+
 Most frameworks wrap your event logic in layers of abstraction:
+
 - React binds events through JSX and synthetic event delegation
 - Svelte uses compiled `on:` directives tied to generated scope
 - Vue adds listeners via templates and internal proxies
 
 Sparkle avoids all of that:
+
 - You **write HTML** directly
 - You **own your elements** by referencing them with `document.getElementById()`
 - You **wire behavior** directly with `wire(elKey, event, handler)`
@@ -303,12 +264,9 @@ There are no components, no lifecycle events, and no hidden reactivity around DO
 
 > Sparkle doesn't own the DOM — you do. It just helps you hook into it cleanly.
 
-
 ---
 
-
 With these runtime tools, Sparkle gives you full architectural clarity — from state to render to DOM wiring — using nothing but plain JavaScript and functions you control.
-
 
 ## 📦 Anatomy of an App Module
 
@@ -316,11 +274,11 @@ Every app follows the same structure:
 
 ```js
 export const render = ({ el, count }) => {
-  el.countDisplay.textContent = count
+	el.countDisplay.textContent = count
 }
 
 export const setup = () => {
-  wire('inc', 'click', o => update(s => ({ ...s, count: s.count + 1 })))
+	wire('inc', 'click', o => update(s => ({ ...s, count: s.count + 1 })))
 }
 
 export { appRef }
@@ -328,26 +286,17 @@ export { appRef }
 
 This keeps behavior modular, testable, and swappable. It’s ideal for embedded widgets, demos, or feature-scoped UI.
 
-
 ---
 
-
-
 ---
-
-
 
 ## 🧾 Templates and HTML
-
 
 ## ⚡️ Blink Internals
 
 Blink is Sparkle’s reactive core — a simple but powerful signal system for tracking and reacting to state changes. Unlike frameworks that rely on virtual DOMs or component trees, Blink focuses on direct, functional reactivity.
 
-
 ---
-
-
 
 ### 🔭 What Is Blink?
 
@@ -357,16 +306,13 @@ Blink provides three core primitives:
 
 ```js
 explicit(initial) // create a writable signal
-fx(fn)            // reactive effect
-implicit(fn)      // derived signal
+fx(fn) // reactive effect
+implicit(fn) // derived signal
 ```
 
 These work together to update your UI in response to changes — with no diffing, no hooks, no proxies.
 
-
 ---
-
-
 
 ### 🔹 `explicit(initial)` – Writable Signals
 
@@ -379,10 +325,7 @@ count.value = 1
 
 Assigning to `.value` notifies any active `fx()` listeners.
 
-
 ---
-
-
 
 ### 🔹 `fx(fn)` – Reactive Effects
 
@@ -390,7 +333,7 @@ Wraps a function so it re-runs whenever a signal it accesses changes.
 
 ```js
 fx(() => {
-  console.log(count.value)
+	console.log(count.value)
 })
 ```
 
@@ -404,10 +347,7 @@ fx(() => render(appRef.value))
 
 This will automatically re-run any time `appRef.value` is reassigned via `update()`.
 
-
 ---
-
-
 
 ### 🔹 `implicit(fn)` – Derived Signals
 
@@ -420,10 +360,7 @@ console.log(double.value) // 2
 
 Blink ensures that whenever `count.value` changes, `double.value` is recalculated.
 
-
 ---
-
-
 
 ### 🔄 Why This Matters
 
@@ -440,10 +377,7 @@ It’s transparent:
 - You know when effects run
 - You can test it like any other function
 
-
 ---
-
-
 
 ### 📐 Internals at a Glance
 
@@ -458,10 +392,7 @@ On update:
 - `.value = newVal` triggers all subscribed effects
 - No batching or async behavior — updates are synchronous and predictable
 
-
 ---
-
-
 
 ### 🧪 Testable and Transparent
 
@@ -475,26 +406,20 @@ expect(count.value).toBe(1)
 
 And `fx()` effects can be tested for invocation timing or reactivity.
 
-
 ---
-
-
 
 ### ✨ Blink vs. Other Systems
 
-| Feature             | Blink    | React (hooks) | Solid (signals) |
-| ------------------- | -------- | ------------- | --------------- |
-| Reactive Primitives | ✅ Yes    | ⚠️ Indirect   | ✅ Yes           |
-| Triggers Re-renders | ✅ Direct | ✅ Via diffing | ✅ Direct        |
-| Requires Compiler   | ❌ No     | ✅ Yes (JSX)   | ✅ Yes           |
+| Feature             | Blink     | React (hooks)  | Solid (signals) |
+| ------------------- | --------- | -------------- | --------------- |
+| Reactive Primitives | ✅ Yes    | ⚠️ Indirect    | ✅ Yes          |
+| Triggers Re-renders | ✅ Direct | ✅ Via diffing | ✅ Direct       |
+| Requires Compiler   | ❌ No     | ✅ Yes (JSX)   | ✅ Yes          |
 | Works with Plain JS | ✅ Always | ❌             | ⚠️ Mostly       |
 
 Blink gives you fine-grained control over reactivity without requiring a framework mindset or special language features.
 
-
 ---
-
-
 
 ### ✅ Summary
 
@@ -530,10 +455,7 @@ Reactive rendering is triggered by Blink. Your `render()` function mutates the D
 
 This results in fast, understandable, and transparent UI behavior.
 
-
 ---
-
-
 
 ## 🧪 Testing
 
@@ -551,10 +473,7 @@ expect(state.count).toBe(1)
 
 This encourages bead-driven test suites and enables apps to be built and validated incrementally.
 
-
 ---
-
-
 
 ## 📦 Utilities Deep Dive
 
@@ -562,10 +481,7 @@ Sparkle’s utility functions power the low-level behavior of the framework. The
 
 Let’s explore the key utilities that support the Sparkle runtime.
 
-
 ---
-
-
 
 ### ✨ `bedazzle(state, ...beads)`
 
@@ -573,10 +489,10 @@ This is the core composition function in Sparkle. It applies all bead functions 
 
 ```js
 const bedazzle = (state, ...fns) =>
-  fns.reduce(
-    (obj, fn) => ({ ...obj, ...fn(obj, newState => bedazzle(newState, ...fns)) }),
-    state
-  )
+	fns.reduce(
+		(obj, fn) => ({ ...obj, ...fn(obj, newState => bedazzle(newState, ...fns)) }),
+		state
+	)
 ```
 
 #### Why it's powerful:
@@ -587,10 +503,7 @@ const bedazzle = (state, ...fns) =>
 
 Beads can call their own methods recursively or pass decorated versions of the next state.
 
-
 ---
-
-
 
 ### 🧱 `createBead(name, fn)`
 
@@ -601,18 +514,15 @@ This helper is used to define beads with:
 
 ```js
 const withFlag = key =>
-  createBead(`flag:${key}`, obj => ({
-    [key]: obj[key] ?? false,
-    [`toggle${capitalize(key)}`]: () => ({ ...obj, [key]: !obj[key] })
-  }))
+	createBead(`flag:${key}`, obj => ({
+		[key]: obj[key] ?? false,
+		[`toggle${capitalize(key)}`]: () => ({ ...obj, [key]: !obj[key] }),
+	}))
 ```
 
 `createBead()` ensures that bead authors don’t accidentally overwrite other bead output, helping keep composition safe.
 
-
 ---
-
-
 
 ### 🔁 `composeUpdates(...fns)`
 
@@ -620,9 +530,9 @@ This utility was originally used to chain multiple state transformations in a si
 
 ```js
 composeUpdates(
-  o => decorate(o).increment(),
-  decorate,
-  o => o.countToggle()
+	o => decorate(o).increment(),
+	decorate,
+	o => o.countToggle()
 )(state)
 ```
 
@@ -636,9 +546,9 @@ Today, Sparkle encourages returning an array of updates directly inside `wire()`
 
 ```js
 setup: ({ wire }) => {
-  wire('toggleButton', 'click', o => {
-    return [o.toggle(), o.countToggle()]
-  })
+	wire('toggleButton', 'click', o => {
+		return [o.toggle(), o.countToggle()]
+	})
 }
 ```
 
@@ -656,7 +566,6 @@ You can still use `composeUpdates()` if you want more functional composition con
 
 > Sparkle’s update pipeline is still pure — it’s just easier now.
 
-
 ### ⚠️ Deprecated / Internal Utilities
 
 These are present in the repo but may be removed or folded in:
@@ -666,10 +575,7 @@ These are present in the repo but may be removed or folded in:
 
 Use them only for legacy patterns or very low-level debugging.
 
-
 ---
-
-
 
 ### ✅ Summary
 
@@ -681,15 +587,11 @@ These utilities give Sparkle its compositional flexibility:
 
 Together, they make behavior layering predictable, testable, and expressive — the foundation for everything Sparkle does.
 
-
 ## 🛠️ Contribution Guide
 
 Sparkle is designed to be extendable — and contributions are welcome, especially in the form of beads. This section explains how to contribute well-crafted, reusable behaviors and keep the ecosystem clean, expressive, and safe.
 
-
 ---
-
-
 
 ### 📦 What Can You Contribute?
 
@@ -700,10 +602,7 @@ Sparkle encourages contributions in the form of:
 - ✅ Utility functions (rare, but considered)
 - ✅ Documentation examples or patterns
 
-
 ---
-
-
 
 ### 🧩 What Makes a Good Bead?
 
@@ -720,13 +619,11 @@ Follow the **finite behavior rule**:
 > If the behavior has a small, finite set of outcomes, include them. Otherwise, make it composable.
 
 For example:
+
 - `withFlag()` handles a boolean — toggle is the only reasonable action
 - `withNumber()` could increment, decrement, reset, double, etc. — so it’s better split into separate beads
 
-
 ---
-
-
 
 ### 🧱 Standard Beads (using `createBead()`)
 
@@ -742,10 +639,7 @@ Standard beads live in the `standard-beads/` folder and can be:
 - Focused (e.g. `withFlag`, not `withEverything`)
 - Layerable with other beads
 
-
 ---
-
-
 
 ### 📛 Naming Guidelines
 
@@ -754,10 +648,7 @@ Standard beads live in the `standard-beads/` folder and can be:
 - Avoid overlapping names between standard beads
 - Prefer intention-revealing names over abstractions
 
-
 ---
-
-
 
 ### 🧪 Testing Your Bead
 
@@ -775,10 +666,7 @@ const toggledState = state.toggleIsVisible()
 expect(toggledState.isVisible).toBe(true)
 ```
 
-
 ---
-
-
 
 ### 📂 Folder and File Conventions
 
@@ -786,10 +674,7 @@ expect(toggledState.isVisible).toBe(true)
 - Export it as a named export
 - Add it to the central export file: `standard-beads/index.js`
 
-
 ---
-
-
 
 ### 📜 Submitting Your Bead (future public repo)
 
@@ -807,10 +692,7 @@ Bead contributions will be reviewed for:
 - Test coverage
 - Usefulness to others
 
-
 ---
-
-
 
 ### 🤝 Community Philosophy
 
@@ -824,7 +706,6 @@ If your bead does something practical and reusable — share it. If your bead do
 
 > Beads are what make Sparkle sparkle.
 
-
 ## 🧠 Design Philosophy
 
 Sparkle is built around a few guiding principles:
@@ -837,10 +718,7 @@ Sparkle is built around a few guiding principles:
 
 > It sparkles — because it doesn’t try to be magic.
 
-
 ---
-
-
 
 ## 📌 Summary
 
@@ -853,4 +731,3 @@ Sparkle gives you:
 - 💡 A no-build workflow with plain HTML
 
 Explore the apps. Contribute a bead. Build UI that does exactly what you mean. Welcome to Sparkle.
-
