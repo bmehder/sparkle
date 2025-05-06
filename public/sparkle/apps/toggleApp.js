@@ -2,7 +2,7 @@ import { createApp } from '../core/createApp.js'
 import { withToggle } from '../beads/withToggle.js'
 import { withCountToggles } from '../beads/withCountToggles.js'
 import { withDOM } from '../standard-beads/withDOM.js'
-import { withLogger } from '../beads/withLogger.js'
+import { withLogger } from '../standard-beads/withLogger.js'
 import { withDevPanel } from '../standard-beads/withDevPanel.js'
 
 const renderLabel = ({ el, label, isOn }) => {

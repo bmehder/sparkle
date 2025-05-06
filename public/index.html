@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Sparkle</title>
   <link rel="stylesheet" href="./styles/index.css">
+
+  <script type="module" src="./sparkle/apps/todoApp.js"></script>
+  <script type="module" src="./sparkle/apps/toggleApp.js"></script>
+  <script type="module" src="./sparkle/apps/timerApp.js"></script>
+  <script type="module" src="./sparkle/apps/counterApp.js"></script>
+  <script type="module" src="./sparkle/apps/voteApp.js"></script>
 </head>
+
 <body class="flow">
   <section>
     <div id="todo-app" class="flow">
@@ -41,9 +49,20 @@
     </div>
   </section>
 
-  <script type="module" src="./sparkle/apps/todoApp.js"></script>
-  <script type="module" src="./sparkle/apps/toggleApp.js"></script>
-  <script type="module" src="./sparkle/apps/timerApp.js"></script>
-  <script type="module" src="./sparkle/apps/counterApp.js"></script>
+  <section>
+    <div id="vote-widget" class="flow">
+      <h2>Do you like this widget?</h2>
+      <div class="button-group">
+        <button id="upBtn">👍</button>
+        <button id="downBtn">👎</button>
+      </div>
+      <p>
+        <strong><span id="voteCount">0</span> upvotes</strong> out of
+        <strong><span id="voteTotal">0</span> votes</strong>
+        (<span id="votePercent">0</span>% positive)
+      </p>
+    </div>
+  </section>
 </body>
+
 </html>
