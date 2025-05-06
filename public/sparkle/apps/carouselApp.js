@@ -46,14 +46,11 @@ export const createCarouselApp = (containerId = 'carousel') => {
 		const slides = Array.isArray(obj.slides) ? obj.slides : []
 
 		return {
-			index,
 			next: () => ({
 				index: (index + 1) % slides.length,
-				slides,
 			}),
 			prev: () => ({
 				index: (index - 1 + slides.length) % slides.length,
-				slides,
 			}),
 		}
 	})

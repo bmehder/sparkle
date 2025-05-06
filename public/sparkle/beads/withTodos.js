@@ -4,7 +4,6 @@ export const withTodos = createBead('todos', obj => {
 	const todos = Array.isArray(obj?.todos) ? obj.todos : []
 
 	return {
-		todos,
 		addTodo: text => ({
 			todos: [...todos, { text, done: false }],
 		}),

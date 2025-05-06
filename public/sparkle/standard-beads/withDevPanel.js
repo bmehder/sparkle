@@ -30,7 +30,7 @@ const panelStyles = {
 	maxHeight: '90vh',
 	overflow: 'auto',
 	resize: 'both',
-	background: '#111',
+	background: '#161616',
 	color: '#0f0',
 	fontSize: '0.8rem',
 	border: '1px solid lime',

@@ -1,3 +1,7 @@
+:root {
+  color-scheme: dark light;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,8 +16,6 @@ body {
   font-family: sans-serif;
   margin: 2rem;
   padding: 2rem;
-  background: #fff;
-  color: #333;
 }
 
 #app, #timer, #counter {

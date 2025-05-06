@@ -4,6 +4,7 @@ import { withNewText } from '../beads/withNewText.js'
 import { withLogger } from '../standard-beads/withLogger.js'
 import { withDevPanel } from '../standard-beads/withDevPanel.js'
 import { withDOM } from '../standard-beads/withDOM.js'
+import { withPersistence } from '../standard-beads/withPersistence.js'
 
 export const render = ({ el, todos, newText }) => {
 	el.todoList.innerHTML = ''
@@ -36,7 +37,6 @@ export const { appRef, update } = createApp({
 	beads: [
 		withTodos,
 		withNewText,
-		withLogger('log-todos'),
 		withDOM('new-todo', 'todo-list'),
 		withDevPanel,
 		obj => ({
