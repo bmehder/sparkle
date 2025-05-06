@@ -44,12 +44,12 @@ Sparkle apps don’t require a build tool, bundler, or CLI. All you need is an H
 
 ```html
 <body>
-  <div id="app">
+  <div id="count-app">
     <p id="count-display">0</p>
     <button id="inc">Increment</button>
   </div>
 
-  <script type="module" src="./src/main.js"></script>
+  <script type="module" src="./sparkle/apps/count-app.js"></script>
 </body>
 ```
 
@@ -64,8 +64,8 @@ You’ll reference elements like `#count-display` and `#inc` in your app’s `re
 
 ```js
 // src/counterApp.js
-import { createApp } from '../runtime/createApp.js'
-import { withCounter } from '../beads/withCounter.js'
+import { createApp } from '../core/createApp.js'
+import { withCounter } from '../core/beads/withCounter.js'
 
 export const render = ({ el, count }) => {
   el.countDisplay.textContent = count
@@ -93,18 +93,6 @@ export const { appRef, update, wire } = createApp({
 
 ---
 
-
-
-### 3. Register the App
-
-```js
-// src/main.js
-import * as counterApp from './counterApp.js'
-import { registerApp } from './runtime/registerApp.js'
-
-registerApp(counterApp)
-```
-
 That’s it. You now have a fully functional reactive UI with no VDOM, no JSX, and no framework boilerplate.
 
 
@@ -117,7 +105,6 @@ That’s it. You now have a fully functional reactive UI with no VDOM, no JSX, a
 - Build your HTML manually
 - Create pure bead behaviors
 - Use `createApp()` to connect state, render, and events
-- Call `registerApp()` to run it
 
 > If it sparkles, ship it.
 
@@ -147,14 +134,12 @@ When your app state is stored in a signal (`explicit()`), Sparkle can re-run you
 ## 🧱 File Structure
 
 ```
-src/
+sparkle/
   apps/           → App examples: counter, timer, toggle
   beads/          → Core beads (pure behaviors)
   standard-beads/ → Reusable bead factories (recommended)
-  runtime/        → App lifecycle (createApp, registerApp)
-  utils/          → Bedazzle engine, signals, decorators, wiring
+  core/           → Bedazzle engine, signals, decorators, wiring, createApp
   styles/         → CSS for examples
-  main.js         → Registers and starts each example app
 ```
 
 
@@ -222,7 +207,6 @@ In other words:
 - It takes your old state
 - Runs your update function (`fn(state)`)
 - Re-decorates the result with all current beads
-- Optionally calls `.log()` if it exists (via `withLogger`)
 - Triggers a re-render
 
 This is Sparkle’s **immutable update loop** — no proxies, no observers. You always return a new state object, and `decorate()` keeps its methods fresh.
@@ -312,27 +296,6 @@ Sparkle avoids all of that:
 There are no components, no lifecycle events, and no hidden reactivity around DOM events. You have full and literal control.
 
 > Sparkle doesn't own the DOM — you do. It just helps you hook into it cleanly.
-
-
----
-
-
-
-### 🧬 `registerApp()`
-
-This utility is used in `main.js` to mount multiple apps:
-
-```js
-registerApp({ appRef, render, setup })
-```
-
-It:
-
-- Calls `render(appRef.value)` initially
-- Runs `setup()` (if provided) to attach events via `wire()`
-- Subscribes to `appRef` using `fx()` so that future changes trigger re-rendering
-
-This makes it easy to split apps into self-contained modules while keeping rendering and setup unified.
 
 
 ---
@@ -647,7 +610,7 @@ const withFlag = key =>
 
 ### 🔁 `composeUpdates(...fns)`
 
-Composes a sequence of update functions that transform state objects. This is useful when you need to coordinate multiple updates — such as applying a behavior, re-decorating, then triggering a follow-up action.
+This utility was originally used to chain multiple state transformations in a single call. For example:
 
 ```js
 composeUpdates(
@@ -657,34 +620,35 @@ composeUpdates(
 )(state)
 ```
 
-This works, but the list of callbacks can feel a little clunky — especially since you have to remember to re-decorate the state in the middle of the chain. This adds mental overhead for simple flows.
-
-We're exploring ergonomics improvements to this utility in a future update to make chaining behavior cleaner and more intuitive.
-
-This utility currently preserves clarity by:
-
-- Keeping each function pure
-- Chaining state transformations explicitly
-- Making re-decoration part of the pipeline, not a side effect
-
+This approach worked well, but could feel clunky — especially since you had to remember to re-decorate the state in the middle of the chain.
 
 ---
 
+### ✅ Recommended Pattern (Current Sparkle)
 
-
-### 🔤 `capitalize(str)`
-
-A simple helper used to dynamically generate method names like `incrementCount`, `toggleFlag`, etc.
+Today, Sparkle encourages returning an array of updates directly inside `wire()` — no `composeUpdates()` needed:
 
 ```js
-const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1)
+setup: ({ wire }) => {
+  wire('toggleButton', 'click', o => {
+    return [o.toggle(), o.countToggle()]
+  })
+}
 ```
 
-Used heavily in standard beads to support key-based naming.
-
+Each bead method like `toggle()` or `countToggle()` returns a partial update. Sparkle merges all returned objects into a single new state automatically.
 
 ---
 
+### 💡 Why This Is Better
+
+- No need to manually re-decorate mid-pipeline
+- Methods remain pure and chainable
+- Reduces mental overhead
+
+You can still use `composeUpdates()` if you want more functional composition control, but for most apps, the array return style is simpler and cleaner.
+
+> Sparkle’s update pipeline is still pure — it’s just easier now.
 
 
 ### ⚠️ Deprecated / Internal Utilities
