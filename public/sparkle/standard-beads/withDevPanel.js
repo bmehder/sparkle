@@ -11,9 +11,7 @@ export const withDevPanel = createBead('devpanel', obj => {
 	const panel = existing ?? createDevPanel()
 	const body = document.getElementById('dev-panel-body')
 	if (body && !panel.classList.contains('hidden')) {
-		// body.textContent = JSON.stringify(obj, null, 2)
 		body.textContent = JSON.stringify(serialize(obj), null, 2)
-
 	}
 	return {}
 })

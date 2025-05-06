@@ -46,8 +46,8 @@ Beads are composable functions that add behavior to your app state.
 ```js
 export const withCounter = createBead('counter', obj => {
   const count = obj.count ?? 0
+
   return {
-    count,
     increment: () => ({ count: count + 1 }),
     decrement: () => ({ count: count - 1 })
   }
@@ -80,7 +80,6 @@ sparkle/
   beads/             → App-specific behaviors
   standard-beads/    → Shared, generic beads (DOM, logger, persistence)
   apps/              → Self-contained app modules
-  styles/            → Global stylesheet (optional)
 ```
 
 ## 🧠 Why Sparkle?

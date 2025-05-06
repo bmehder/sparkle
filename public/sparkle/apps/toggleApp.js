@@ -4,7 +4,6 @@ import { withCountToggles } from '../beads/withCountToggles.js'
 import { withDOM } from '../standard-beads/withDOM.js'
 import { withLogger } from '../standard-beads/withLogger.js'
 import { withDevPanel } from '../standard-beads/withDevPanel.js'
-import { withPersistence } from '../standard-beads/withPersistence.js'
 
 const renderLabel = ({ el, label, isOn }) => {
 	el.label.textContent = `${label}: ${isOn ? 'ON' : 'OFF'}`
