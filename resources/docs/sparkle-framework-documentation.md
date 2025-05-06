@@ -33,7 +33,7 @@ It aims to give developers full control over DOM, behavior, and state — withou
 
 ## 🚀 Quickstart
 
-Sparkle apps don’t require a build tool, bundler, or CLI. All you need is an HTML file and a few script tags. Here's the fastest way to get started:
+Sparkle apps don’t require a build tool, bundler, or CLI. All you need is an HTML file and a script tag. Here's the fastest way to get started:
 
 
 ---
@@ -63,31 +63,37 @@ You’ll reference elements like `#count-display` and `#inc` in your app’s `re
 ### 2. Create Your App Logic
 
 ```js
-// src/counterApp.js
+// sparkle/apps/counterApp.js
 import { createApp } from '../core/createApp.js'
-import { withCounter } from '../core/beads/withCounter.js'
+import { withCounter } from '../beads/withCounter.js'
+import { withCountToggles } from '../beads/withCountToggles.js'
+import { withDOM } from '../standard-beads/withDOM.js'
+import { withLogger } from '../standard-beads/withLogger.js'
+import { withDevPanel } from '../standard-beads/withDevPanel.js'
 
-export const render = ({ el, count }) => {
-  el.countDisplay.textContent = count
+const render = ({ el, count, toggleCount }) => {
+	el.countDisplay.textContent = count
+	el.toggleCount.textContent = toggleCount ?? 0 // optional display
 }
 
-export const setup = () => {
-  wire('inc', 'click', o => update(s => ({ ...s, count: s.count + 1 })))
-}
-
-export const { appRef, update, wire } = createApp({
-  seed: { count: 0 },
-  beads: [
-    withCounter,
-    obj => ({
-      el: {
-        countDisplay: document.getElementById('count-display'),
-        inc: document.getElementById('inc')
-      }
-    })
-  ],
-  render
+const { appRef } = createApp({
+	seed: { count: 0 },
+	beads: [
+		withCounter,
+		withCountToggles,
+		withDOM('countDisplay', 'toggleCount', 'inc', 'dec'), // ✅ shared DOM bead
+		withLogger('Counter'), // ✅ updated logger,
+		withDevPanel,
+	],
+	render,
+	setup: ({ wire }) => {
+		wire('inc', 'click', o => [o.increment(), o.countToggle?.()])
+		wire('dec', 'click', o => [o.decrement(), o.countToggle?.()])
+	},
 })
+
+export { appRef, render }
+
 ```
 
 
