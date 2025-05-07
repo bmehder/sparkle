@@ -16,7 +16,7 @@ Sparkle is here. It's small. It composes. It doesn't need a build tool. It might
 
 - A tiny, immutable state engine powered by pure functions  
 - A bead-based architecture for composing UI behavior  
-- A reactive core powered by **Slank** — a dead-simple signal system  
+- A reactive core powered by **Blink** — a dead-simple signal system  
 - A toolkit with a name that is more cheerful than its existential implications
 
 Sparkle doesn’t care how you organize your files. It doesn’t have a CLI. It will not "infer" anything about your intentions. You wire up the DOM yourself. Like an adult.
@@ -28,7 +28,7 @@ Sparkle doesn’t care how you organize your files. It doesn’t have a CLI. It 
 - **Beads, not components** — Composable units of behavior, not code tombs  
 - **Explicit render functions** — You write them. You control them. You suffer or thrive accordingly  
 - **update() that updates** — No proxies. No hooks. Just a function  
-- **Reactive rendering via Slank** — No VDOM, just signals and effects  
+- **Reactive rendering via Blink** — No VDOM, just signals and effects  
 - **No build step** — Because we have nothing to prove  
 - **100% JavaScript** — The good kind. The kind you can actually open and read
 
@@ -41,7 +41,7 @@ Sparkle doesn’t care how you organize your files. It doesn’t have a CLI. It 
 - Counter app — bold, innovative, increments things  
 - Carousel widget — embeddable, scrollable, emotionally neutral  
 
-All apps come in `src/` so you can spend your weekend deleting them and writing your own.
+All apps come in `apps/` so you can spend your weekend deleting them and writing your own.
 
 ---
 
@@ -61,12 +61,8 @@ If you’re allergic to magic but still want your UI to sparkle (in a completely
 ## 📦 Installation
 
 ```bash
-git clone sparkle.zip
+git clone https://github.com/bmehder/sparkle.git
 ```
-
-You’re done.
-
----
 
 ## 🕳 Where This Is Going
 

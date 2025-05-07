@@ -1,4 +1,3 @@
-
 # ✨ How Sparkle Works
 
 **Sparkle** is a tiny UI microframework that composes apps from pure functions and behavior units called **beads**. It requires no build tools, no compilation, and no frameworks — just JavaScript modules and the browser.
@@ -31,8 +30,9 @@ bedazzle(seed, withToggle, withLogger)
 Initializes an app with:
 - a decorated state (`appRef`)
 - an `update()` function for immutable updates
-- a `wire()` function for DOM event bindings
 - a `decorate()` function to apply all current beads
+- a `wire()` function for DOM event binding (used inside `setup()`)
+- optional reactive rendering via `fx()`
 
 ### 🔁 update(fn)
 Calls `decorate(fn(obj))`, reassigns the app's state, and re-renders.
@@ -42,35 +42,40 @@ Calls `decorate(fn(obj))`, reassigns the app's state, and re-renders.
 ## 🧬 App Lifecycle
 
 1. You define a `seed` state and list of `beads`
-2. You call `createApp()` to get back the app control surface
-3. You `wire()` events to actions
-4. You `render()` from the state object
-5. You optionally export a `setup()` function to group wiring logic
-6. You `registerApp()` in `main.js`
+2. You call `createApp()` with `render()` and optional `setup()`
+3. Sparkle automatically wires `fx(() => render(appRef.value))`
+4. Inside `setup({ wire })`, you declaratively attach DOM events
+5. Every `update()` re-applies beads and triggers `render()`
 
 ---
 
 ## 🔧 Example Usage
 
 ```js
-const {
-  appRef,
-  wire,
-  update,
-  decorate
-} = createApp({ seed, beads, render })
+import { createApp } from '../core/createApp.js'
+import { withToggle } from '../beads/withToggle.js'
+import { withCountToggles } from '../beads/withCountToggles.js'
+import { withDOM } from '../standard-beads/withDOM.js'
+import { withLogger } from '../standard-beads/withLogger.js'
 
-wire('toggle', 'click', () =>
-  update(
-    composeUpdates(
-      o => o.toggle(),
-      decorate,
-      o => o.countToggle()
-    )
-  )
-)
+const render = ({ el, label, isOn }) => {
+  el.label.textContent = `${label}: ${isOn ? 'ON' : 'OFF'}`
+  el.toggleButton.textContent = isOn ? 'Turn Off' : 'Turn On'
+}
 
-render(appRef.value)
+const { appRef } = createApp({
+  seed: { label: 'Lights' },
+  beads: [
+    withDOM('label', 'toggleButton'),
+    withToggle,
+    withCountToggles,
+    withLogger
+  ],
+  render,
+  setup: ({ wire }) => {
+    wire('toggleButton', 'click', o => [o.toggle(), o.countToggle()])
+  }
+})
 ```
 
 ---
@@ -82,6 +87,9 @@ There’s no virtual DOM, no compiler, and no magic lifecycle.
 You:
 - own your state
 - own your rendering
-- wire everything explicitly
+- define your wiring with `setup()`
+- use plain functions to layer behavior
 
 That’s Sparkle.
+
+> Compose small, pure behaviors. Wire with intent. Render without illusion.

@@ -31,55 +31,45 @@ Beads should:
 
 ## 🧱 Creating an App Module
 
-Sparkle apps live in `src/apps/*.js` and follow a pattern:
+Sparkle apps live in `src/apps/*.js` and follow a consistent pattern.
+
+Each module creates its own state, behaviors, render logic, and event wiring using `createApp()`.
 
 ```js
-const render = obj => {
-  obj.el.output.textContent = obj.count
+import { createApp } from '../core/createApp.js'
+import { withCounter } from '../beads/withCounter.js'
+import { withLogger } from '../standard-beads/withLogger.js'
+import { withDOM } from '../standard-beads/withDOM.js'
+
+const render = ({ el, count }) => {
+  el.output.textContent = count
 }
 
-const { appRef, decorate, update, wire } = createApp({
+const { appRef } = createApp({
   seed: { count: 0 },
-  beads: [withCounter, withLogger],
-  render
+  beads: [
+    withDOM('output', 'inc', 'dec'),
+    withCounter,
+    withLogger
+  ],
+  render,
+  setup: ({ wire }) => {
+    wire('inc', 'click', o => o.increment())
+    wire('dec', 'click', o => o.decrement())
+  }
 })
 
-const setup = () => {
-  wire('inc', 'click', o => decorate(o).increment())
-  wire('dec', 'click', o => decorate(o).decrement())
-}
-
-export { appRef, render, setup }
+export { appRef }
 ```
 
-Each app file should export:
-- `appRef`: the app’s reactive reference
-- `render`: the UI update function
-- `setup` (optional): wiring logic for DOM events
+Each app file typically exports:
 
----
+- `appRef`: the app’s reactive reference, so `fx(() => render(appRef.value))` is handled internally
+- (Optionally) any named methods or flags you want to expose
 
-## 🧩 Reusing Beads
+You no longer need to export or call a separate `setup()` function — wiring is handled inline during app creation.
 
-You can reuse beads across apps:
-
-```js
-// This tracks every interaction
-withCountToggles
-```
-
-Just `decorate()` the object again before calling the method.
-
----
-
-## 🧰 Tools You Can Use
-
-| Utility            | Purpose                                |
-|--------------------|----------------------------------------|
-| `composeUpdates()` | Combine multiple state updates in order |
-| `createDecorator()`| Return a reusable decorator            |
-| `createUpdater()`  | Produce a functional update handler    |
-| `registerApp()`    | Renders + runs `setup()` on an app     |
+> Sparkle apps are just files. Pure functions in, expressive DOM out.
 
 ---
 

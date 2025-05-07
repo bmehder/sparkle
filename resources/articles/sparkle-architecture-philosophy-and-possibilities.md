@@ -81,10 +81,6 @@ decorate(o => ({ ...o, count: o.count + 1 }))
 
 or
 
-```js
-appRef.value = decorate(composeUpdates(...fns)(appRef.value))
-```
-
 This is Sparkle’s version of the atomic build principle:
 
 > **Rebuild the full object each time, not just patch it.**
@@ -97,7 +93,7 @@ Sparkle quietly reveals core functional programming patterns — not by enforcin
 
 ✅ **Pure functions** — Beads return only what they compute.\
 ✅ **Immutability** — State is copied and re-decorated; never mutated.\
-✅ **Function composition** — You use `composeUpdates()` or decorate pipelines.\
+✅ **Function composition** — You decorate pipelines.\
 ✅ **Explicit effects** — You run effects manually via `blink.fx()` — they don’t “just happen.”\
 ✅ **Declarative behavior** — You describe *what should happen*, not how to control it.
 
@@ -148,23 +144,74 @@ This makes it perfect for:
 
 ---
 
-## 🔍 Declarative Wiring
+### 🔍 Declarative Wiring
 
-> **Sparkle’s `wire()` function replaces lifecycle hooks with pure intent.****
+Sparkle's event model favors **explicit control** over lifecycle abstractions.
 
-Instead of mounting logic or component-based listeners, Sparkle encourages:
+Instead of component-bound listeners or declarative templates, Sparkle encourages attaching event handlers directly via a `setup()` function passed to `createApp()`:
 
 ```js
-wire('submitBtn', 'click', o => o.update(...))
+createApp({
+  seed,
+  beads,
+  render,
+  setup: ({ wire }) => {
+    wire('submitBtn', 'click', o => {
+      return [o.validateForm(), o.save()]
+    })
+  }
+})
 ```
 
-This gives you:
+You still have access to `wire()` — but it's now scoped and provided via `setup()`. This pattern allows:
 
-- Total control over event bindings
-- Easier testing and debugging
-- Pure, DOM-first interactions
+- ✅ Total control over event bindings  
+- ✅ Easier testing and debugging  
+- ✅ Clean separation between render and behavior  
+- ✅ DOM-first, intention-driven logic  
 
-> **In Sparkle, events are relationships between state and DOM — not embedded into lifecycle abstractions.**
+In Sparkle, events are relationships between **state** and the **DOM** — not embedded into a component lifecycle. You wire them intentionally, exactly when and where they matter.
+
+> Instead of hiding interactions in components, Sparkle exposes them as part of your app’s structure.
+
+---
+
+### ⚔️ Comparison: Sparkle vs. Component Frameworks
+
+| Concern                | Sparkle (`setup`)       | Traditional Frameworks       |
+|------------------------|-------------------------|-------------------------------|
+| Event binding location | Manual DOM element refs | Template + component methods  |
+| Abstraction model      | Explicit, function-based | Component lifecycle wrappers  |
+| Debuggability          | High — no indirection    | Medium — behind framework     |
+| Testability            | Pure, functional units   | Often coupled to component tree |
+| Control level          | Full DOM + state access  | Scoped to component instance  |
+
+---
+
+### 🎹 Example: Global Keyboard Shortcut
+
+Want to toggle a panel when `Ctrl+D` is pressed?
+
+```js
+setup: ({ update }) => {
+  const handler = e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+      e.preventDefault()
+      update(o => o.togglePanel())
+    }
+  }
+  document.addEventListener('keydown', handler)
+
+  // Optional cleanup
+  return () => {
+    document.removeEventListener('keydown', handler)
+  }
+}
+```
+
+Sparkle doesn’t assume a component context or teardown lifecycle — if you need to clean up global listeners, just return a function from `setup()` and call it manually when needed.
+
+> The browser gives you all the power. Sparkle gives you clean ways to use it.
 
 ---
 
@@ -222,13 +269,79 @@ No magic proxies. No hydration artifacts. No synthetic state machines.
 
 > **In Sparkle, an error in one bead doesn’t poison the rest of the app.**
 
-Each effect, bead, and handler is isolated:
+Each bead, effect, and handler in Sparkle is isolated by design:
 
-- If a `render()` throws, it doesn't crash the app
-- If one `fx()` fails, others continue
+- If a `render()` throws, the app doesn’t crash — unless you wire everything through it
+- If one `fx()` fails, others keep running
 - If a bead misbehaves, only that bead’s behavior is affected
 
-This is possible because Sparkle avoids global reactivity graphs and implicit dependencies.
+This is possible because Sparkle avoids global reactivity graphs, proxy traps, and hidden lifecycle wiring. Everything runs in **explicit, functional units**.
+
+---
+
+### 🧩 Minimal Blast Radius by Design
+
+In traditional frameworks, an error in one part of your component tree or reactive graph can take down the whole app — or worse, fail silently in unpredictable ways.
+
+In Sparkle, the **blast area** of a failure is small and contained.
+
+Each bead is applied individually in a pure, composable loop:
+
+```js
+beads.reduce((obj, bead) => ({ ...obj, ...bead(obj) }), seed)
+```
+
+So if one bead throws, it only affects that part of the composition. You can even catch and contain the failure using a wrapper:
+
+```js
+const safeBead = (name, fn) => obj => {
+  try {
+    return fn(obj)
+  } catch (err) {
+    console.warn(`⚠️ Bead "${name}" failed:`, err)
+    return {}
+  }
+}
+```
+
+This lets you log the failure while keeping the rest of the system stable and fully functional.
+
+---
+
+### 🧪 Example: Broken Bead, Intact App
+
+```js
+const withBrokenBehavior = obj => {
+  throw new Error('Boom!')
+}
+
+const { appRef } = createApp({
+  seed: { count: 0 },
+  beads: [
+    withCounter,
+    safeBead('broken', withBrokenBehavior), // logs error, returns nothing
+    withLogger
+  ],
+  render: ({ el, count }) => {
+    el.countDisplay.textContent = count
+  }
+})
+```
+
+Even though `withBrokenBehavior` explodes, the app still runs. The counter still works. Logging still happens. The blast radius is limited to that one bead.
+
+---
+
+### ✅ Summary
+
+Sparkle is built for **graceful failure**:
+
+- Each bead is optional and isolated
+- Each `fx()` is independent
+- Each `render()` is its own unit
+- State is immutable, so nothing gets corrupted or stuck
+
+> In Sparkle, the blast area of an error is small, contained, and obvious — never mysterious.
 
 ---
 
@@ -245,46 +358,6 @@ Sparkle is lazy in the best sense:
 > **Sparkle doesn’t simulate the browser. It works with it.**
 
 It’s more like Unix pipes than React trees. You build apps the way you write scripts: one behavior at a time.
-
----
-
-## 💰 Example: Adding a Simple Product Page
-
-Want to sell one item? You don’t need Shopify.
-
-```html
-<h1 id="product-name"></h1>
-<select id="variant"></select>
-<input id="qty" type="number" value="1">
-<button id="buy">Buy Now</button>
-```
-
-```js
-wire('buy', 'click', o =>
-  o.update(o => ({ ...o, purchased: true }))
-)
-```
-
-No cart. No hydration. Just logic and DOM. That's the Sparkle way.
-
-> **You don’t scale Sparkle like a framework. You scale it like a shell script — by composing clean, purposeful tools.**
-
----
-
-## 🛠️ Injecting Layout Without a Framework
-
-You don’t need a layout engine. Just load shared headers/footers via `injectLayout()`:
-
-```js
-export const injectLayout = async () => {
-  const html = await fetch('/components/header.html').then(r => r.text())
-  document.body.insertAdjacentHTML('afterbegin', html)
-}
-```
-
-You accept small layout shifts in exchange for simplicity and speed.
-
-> **Sometimes the best UX isn’t perfect — it’s obvious and fast.**
 
 ---
 

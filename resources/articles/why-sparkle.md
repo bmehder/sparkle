@@ -79,7 +79,7 @@ Sparkle apps can live in a single HTML file:
 
 ```html
 <script type="module">
-  import { createApp } from '/sparkle/runtime/createApp.js'
+  import { createApp } from '/sparkle/core/createApp.js'
   ...
 </script>
 ```
