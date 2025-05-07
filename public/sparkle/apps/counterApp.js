@@ -6,21 +6,16 @@ import { withCountToggles } from '../beads/withCountToggles.js'
 import { withDOM } from '../standard-beads/withDOM.js'
 import { withLogger } from '../standard-beads/withLogger.js'
 import { withDevPanel } from '../standard-beads/withDevPanel.js'
-import { withPersistence } from '../standard-beads/withPersistence.js'
 import { withHistory } from '../standard-beads/withHistory.js'
 
-console.log('[counterApp] loaded')
-
-const renderCounter = ({ el, count, toggleCount }) => {
-	console.log('[counterApp] fx triggered')
+const render = ({ el, count, toggleCount }) => {
 	el.countDisplay.textContent = count
 	el.toggleCount.textContent = toggleCount ?? 0
 }
 
-const { appRef: counterRef, update: updateCounter } = createApp({
+const { appRef } = createApp({
 	seed: { count: 0 },
 	beads: [
-		withPersistence('Sparkle:Counter', ['count', 'toggleCount', 'history']),
 		withHistory(50),
 		withCounter,
 		withCountToggles,
@@ -28,7 +23,7 @@ const { appRef: counterRef, update: updateCounter } = createApp({
 		withLogger('Counter'),
 		withDevPanel,
 	],
-	render: renderCounter,
+	render,
 	setup: ({ wire }) => {
 		wire('inc', 'click', o => [o.increment(), o.countToggle?.()])
 		wire('dec', 'click', o => [o.decrement(), o.countToggle?.()])
@@ -36,5 +31,7 @@ const { appRef: counterRef, update: updateCounter } = createApp({
 	autoRender: false,
 })
 
-renderCounter(counterRef.value)
-fx(() => renderCounter(counterRef.value))
+render(appRef.value)
+fx(() => render(appRef.value))
+
+export { appRef, render }

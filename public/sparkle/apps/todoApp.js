@@ -3,21 +3,16 @@ import { fx } from '../core/blink.js'
 
 import { withTodos } from '../beads/withTodos.js'
 import { withNewText } from '../beads/withNewText.js'
-
 import { withDOM } from '../standard-beads/withDOM.js'
 import { withDevPanel } from '../standard-beads/withDevPanel.js'
-import { withPersistence } from '../standard-beads/withPersistence.js'
 
-console.log('[todoApp] loaded')
-
-export const renderTodo = ({ el, todos, newText }) => {
-	console.log('[todoApp] fx triggered')
+export const render = ({ el, todos, newText }) => {
 	el.todoList.innerHTML = ''
 
 	todos.forEach((todo, index) => {
 		const li = document.createElement('li')
 		li.className = todo.done ? 'done' : ''
-		li.onclick = () => updateTodo(s => s.toggleTodo(index))
+		li.onclick = () => update(s => s.toggleTodo(index))
 
 		const label = document.createElement('span')
 		label.className = 'label'
@@ -27,7 +22,7 @@ export const renderTodo = ({ el, todos, newText }) => {
 		del.textContent = '×'
 		del.onclick = e => {
 			e.stopPropagation()
-			updateTodo(s => s.removeTodo(index))
+			update(s => s.removeTodo(index))
 		}
 
 		li.append(label, del)
@@ -37,16 +32,15 @@ export const renderTodo = ({ el, todos, newText }) => {
 	el.newTodo.value = newText ?? ''
 }
 
-export const { appRef: todoRef, update: updateTodo } = createApp({
+export const { appRef, update } = createApp({
 	seed: { todos: [], newText: '' },
 	beads: [
-		withPersistence('Sparkle:Todos', ['todos', 'newText']),
 		withTodos,
 		withNewText,
 		withDOM('newTodo', 'todoList'),
 		withDevPanel,
 	],
-	render: renderTodo,
+	render,
 	setup: ({ wire }) => {
 		wire('newTodo', 'input', (o, e) => ({
 			todos: o.todos,
@@ -55,7 +49,7 @@ export const { appRef: todoRef, update: updateTodo } = createApp({
 
 		wire('newTodo', 'keypress', (o, e) => {
 			if (e.key === 'Enter' && o.newText.trim()) {
-				updateTodo(s => ({
+				update(s => ({
 					...s.addTodo(s.newText.trim()),
 					newText: '',
 				}))
@@ -65,5 +59,5 @@ export const { appRef: todoRef, update: updateTodo } = createApp({
 	autoRender: false,
 })
 
-renderTodo(todoRef.value)
-fx(() => renderTodo(todoRef.value))
+render(appRef.value)
+fx(() => render(appRef.value))
