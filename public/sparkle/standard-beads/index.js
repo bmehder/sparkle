@@ -1,8 +1,0 @@
-export { withDevPanel } from './withDevPanel.js'
-export { withDom } from './withDom.js'
-export { withFlag } from './withFlag.js'
-export { withLogger } from './withLogger.js'
-export { withNumber } from './withNumber.js'
-export { withPersistence } from './withPersistence.js'
-export { withTARDIS } from './withTARDIS.js'
-export { withUndoRedo } from './withUndoRedo.js'

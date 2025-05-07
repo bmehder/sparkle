@@ -1,9 +1,11 @@
 import { createApp } from '../core/createApp.js'
+import { fx } from '../core/blink.js'
+
 import { withTodos } from '../beads/withTodos.js'
 import { withNewText } from '../beads/withNewText.js'
-import { withLogger } from '../standard-beads/withLogger.js'
-import { withDevPanel } from '../standard-beads/withDevPanel.js'
+
 import { withDOM } from '../standard-beads/withDOM.js'
+import { withDevPanel } from '../standard-beads/withDevPanel.js'
 import { withPersistence } from '../standard-beads/withPersistence.js'
 
 export const render = ({ el, todos, newText }) => {
@@ -21,7 +23,7 @@ export const render = ({ el, todos, newText }) => {
 		const del = document.createElement('button')
 		del.textContent = '×'
 		del.onclick = e => {
-			e.stopPropagation() // prevent li.onclick from firing
+			e.stopPropagation()
 			update(s => s.removeTodo(index))
 		}
 
@@ -33,18 +35,16 @@ export const render = ({ el, todos, newText }) => {
 }
 
 export const { appRef, update } = createApp({
-	seed: { todos: [] },
+	seed: { todos: [], newText: '' },
 	beads: [
+		// 🧠 Behavior beads
+		withPersistence('TodoApp', ['todos', 'newText']),
 		withTodos,
 		withNewText,
-		withDOM('new-todo', 'todo-list'),
+
+		// 🧱 DOM / tooling
+		withDOM('newTodo', 'todoList'),
 		withDevPanel,
-		obj => ({
-			el: {
-				newTodo: document.getElementById('new-todo'),
-				todoList: document.getElementById('todo-list'),
-			},
-		}),
 	],
 	render,
 	setup: ({ wire }) => {
@@ -55,11 +55,16 @@ export const { appRef, update } = createApp({
 
 		wire('newTodo', 'keypress', (o, e) => {
 			if (e.key === 'Enter' && o.newText.trim()) {
-				return [
-					o.addTodo(o.newText.trim()),
-					{ newText: '' }, // reset input
-				]
+				update(s => ({
+					...s.addTodo(s.newText.trim()),
+					newText: '',
+				}))
 			}
 		})
 	},
+	autoRender: false,
 })
+
+// 🧼 Initial render, then reactive updates
+render(appRef.value)
+fx(() => render(appRef.value))

@@ -1,40 +1,60 @@
 import { createBead } from '../core/createBead.js'
 
 /**
- * 🔒 withPersistence
+ * 🔒 withPersistenceLite
  *
- * Persists the app state to localStorage under the given key.
- * On first run, merges any stored state into the current object.
- * On every update, stores the full decorated object to localStorage.
+ * A minimal persistence bead that:
+ * - Restores selected fields from localStorage (once, on first decoration)
+ * - Saves those fields on every update (excluding transient fields like `el`)
+ *
+ * @param {string} key - localStorage key to persist under
+ * @param {string[]} fields - fields to restore/save (e.g., ['todos', 'newText'])
  */
-export const withPersistence = (key = 'sparkle-app') =>
-	createBead(`persist:${key}`, obj => {
-		// Load saved state (only once on first decoration)
-		const stored = localStorage.getItem(key)
-		let merged = obj
+export const withPersistence = (key = 'sparkle-app', fields = []) => {
+	let hydrated = false
+	let lastSaved = ''
 
-		if (stored) {
+	return createBead(`persistLite:${key}`, obj => {
+		let result = {}
+
+		// 1. Hydrate once on first decoration
+		if (!hydrated) {
+			hydrated = true
 			try {
-				const parsed = JSON.parse(stored)
-				if (parsed && typeof parsed === 'object') {
-					merged = { ...obj, ...parsed }
+				const stored = localStorage.getItem(key)
+				if (stored) {
+					const parsed = JSON.parse(stored)
+					if (parsed && typeof parsed === 'object') {
+						for (const f of fields) {
+							if (f in parsed) result[f] = parsed[f]
+						}
+					}
 				}
 			} catch (err) {
-				console.warn(
-					`[withPersistence] Failed to parse localStorage for "${key}"`,
-					err
-				)
+				console.warn(`[withPersistenceLite] Failed to parse "${key}"`, err)
 			}
 		}
 
-		// Save current state after update
-		setTimeout(() => {
-			try {
-				localStorage.setItem(key, JSON.stringify(obj))
-			} catch (err) {
-				console.warn(`[withPersistence] Failed to store state for "${key}"`, err)
-			}
-		}, 0)
+		// 2. Schedule save of selected fields
+		const safe = {}
+		for (const f of fields) {
+			if (f in obj) safe[f] = obj[f]
+		}
 
-		return merged
+		const next = JSON.stringify(safe)
+		if (next !== lastSaved) {
+			lastSaved = next
+			if (typeof requestIdleCallback === 'function') {
+				requestIdleCallback(() => {
+					localStorage.setItem(key, next)
+				})
+			} else {
+				setTimeout(() => {
+					localStorage.setItem(key, next)
+				}, 100)
+			}
+		}
+
+		return result
 	})
+}
