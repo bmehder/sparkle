@@ -56,8 +56,5 @@ export const { appRef, update } = createApp({
 			}
 		})
 	},
-	autoRender: false,
 })
 
-render(appRef.value)
-fx(() => render(appRef.value))

@@ -28,10 +28,6 @@ const { appRef } = createApp({
 		wire('inc', 'click', o => [o.increment(), o.countToggle?.()])
 		wire('dec', 'click', o => [o.decrement(), o.countToggle?.()])
 	},
-	autoRender: false,
 })
-
-render(appRef.value)
-fx(() => render(appRef.value))
 
 export { appRef, render }
