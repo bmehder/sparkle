@@ -1,23 +1,14 @@
 import { createBead } from '../core/createBead.js'
 
-/**
- * 🔒 withPersistenceLite
- *
- * A minimal persistence bead that:
- * - Restores selected fields from localStorage (once, on first decoration)
- * - Saves those fields on every update (excluding transient fields like `el`)
- *
- * @param {string} key - localStorage key to persist under
- * @param {string[]} fields - fields to restore/save (e.g., ['todos', 'newText'])
- */
 export const withPersistence = (key = 'sparkle-app', fields = []) => {
 	let hydrated = false
 	let lastSaved = ''
 
-	return createBead(`persistLite:${key}`, obj => {
-		let result = {}
+	return createBead(`persist:${key}`, obj => {
+		console.log(`[withPersistence] RUNNING for: ${key}`)
 
-		// 1. Hydrate once on first decoration
+		let patch = {}
+
 		if (!hydrated) {
 			hydrated = true
 			try {
@@ -26,35 +17,33 @@ export const withPersistence = (key = 'sparkle-app', fields = []) => {
 					const parsed = JSON.parse(stored)
 					if (parsed && typeof parsed === 'object') {
 						for (const f of fields) {
-							if (f in parsed) result[f] = parsed[f]
+							if (f in parsed) patch[f] = parsed[f]
 						}
+						console.log(`[withPersistence] LOADED for: ${key}`, patch)
 					}
 				}
 			} catch (err) {
-				console.warn(`[withPersistenceLite] Failed to parse "${key}"`, err)
+				console.warn(`[withPersistence] Failed to parse "${key}"`, err)
 			}
 		}
 
-		// 2. Schedule save of selected fields
 		const safe = {}
 		for (const f of fields) {
 			if (f in obj) safe[f] = obj[f]
 		}
 
-		const next = JSON.stringify(safe)
-		if (next !== lastSaved) {
-			lastSaved = next
+		const json = JSON.stringify(safe)
+		if (json !== lastSaved) {
+			lastSaved = json
+			console.log(`[withPersistence] SAVING for: ${key}`, safe)
+
 			if (typeof requestIdleCallback === 'function') {
-				requestIdleCallback(() => {
-					localStorage.setItem(key, next)
-				})
+				requestIdleCallback(() => localStorage.setItem(key, json))
 			} else {
-				setTimeout(() => {
-					localStorage.setItem(key, next)
-				}, 100)
+				setTimeout(() => localStorage.setItem(key, json), 100)
 			}
 		}
 
-		return result
+		return patch
 	})
 }

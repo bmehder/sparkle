@@ -8,13 +8,16 @@ import { withDOM } from '../standard-beads/withDOM.js'
 import { withDevPanel } from '../standard-beads/withDevPanel.js'
 import { withPersistence } from '../standard-beads/withPersistence.js'
 
-export const render = ({ el, todos, newText }) => {
+console.log('[todoApp] loaded')
+
+export const renderTodo = ({ el, todos, newText }) => {
+	console.log('[todoApp] fx triggered')
 	el.todoList.innerHTML = ''
 
 	todos.forEach((todo, index) => {
 		const li = document.createElement('li')
 		li.className = todo.done ? 'done' : ''
-		li.onclick = () => update(s => s.toggleTodo(index))
+		li.onclick = () => updateTodo(s => s.toggleTodo(index))
 
 		const label = document.createElement('span')
 		label.className = 'label'
@@ -24,7 +27,7 @@ export const render = ({ el, todos, newText }) => {
 		del.textContent = '×'
 		del.onclick = e => {
 			e.stopPropagation()
-			update(s => s.removeTodo(index))
+			updateTodo(s => s.removeTodo(index))
 		}
 
 		li.append(label, del)
@@ -34,19 +37,16 @@ export const render = ({ el, todos, newText }) => {
 	el.newTodo.value = newText ?? ''
 }
 
-export const { appRef, update } = createApp({
+export const { appRef: todoRef, update: updateTodo } = createApp({
 	seed: { todos: [], newText: '' },
 	beads: [
-		// 🧠 Behavior beads
-		withPersistence('TodoApp', ['todos', 'newText']),
+		withPersistence('Sparkle:Todos', ['todos', 'newText']),
 		withTodos,
 		withNewText,
-
-		// 🧱 DOM / tooling
 		withDOM('newTodo', 'todoList'),
 		withDevPanel,
 	],
-	render,
+	render: renderTodo,
 	setup: ({ wire }) => {
 		wire('newTodo', 'input', (o, e) => ({
 			todos: o.todos,
@@ -55,7 +55,7 @@ export const { appRef, update } = createApp({
 
 		wire('newTodo', 'keypress', (o, e) => {
 			if (e.key === 'Enter' && o.newText.trim()) {
-				update(s => ({
+				updateTodo(s => ({
 					...s.addTodo(s.newText.trim()),
 					newText: '',
 				}))
@@ -65,6 +65,5 @@ export const { appRef, update } = createApp({
 	autoRender: false,
 })
 
-// 🧼 Initial render, then reactive updates
-render(appRef.value)
-fx(() => render(appRef.value))
+renderTodo(todoRef.value)
+fx(() => renderTodo(todoRef.value))
